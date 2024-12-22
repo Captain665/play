@@ -22,4 +22,5 @@ public class HomeController extends Controller {
 		return ok("Health is ok");
 	}
 
+
 }
