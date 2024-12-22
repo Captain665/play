@@ -1,14 +1,23 @@
 package common.base;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
+@MappedSuperclass
 public abstract class BaseModel implements Serializable {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	public Long id;
+	@Column(name = "created_at")
 	public LocalDateTime createdAt;
+	@Column(name = "created_by")
 	public String createdBy;
+	@Column(name = "updated_at")
 	public LocalDateTime updatedAt;
+	@Column(name = "updated_by")
 	public String updatedBy;
 
 
@@ -24,6 +33,7 @@ public abstract class BaseModel implements Serializable {
 		return createdAt;
 	}
 
+	@PrePersist
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = LocalDateTime.now();
 	}
@@ -40,6 +50,7 @@ public abstract class BaseModel implements Serializable {
 		return updatedAt;
 	}
 
+	@PreUpdate
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = LocalDateTime.now();
 	}

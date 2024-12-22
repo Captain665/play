@@ -11,4 +11,4 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /health                     controllers.HomeController.health()
 
 # Employee
-GET     /v1/employee                v1.employee.EmployeeController.create()
+GET     /v1/employee                v1.employee.EmployeeController.create(request: Request)

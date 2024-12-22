@@ -20,11 +20,6 @@
     </appender>
 
     <appender name="STDOUT" class="ConsoleAppender">
-        <!--
-             On Windows, enabling Jansi is recommended to benefit from color code interpretation on DOS command prompts,
-             which otherwise risk being sent ANSI escape sequences that they cannot interpret.
-             See https://logback.qos.ch/manual/layouts.html#coloring
-        -->
         <!-- <withJansi>true</withJansi> -->
         <encoder class="PatternLayoutEncoder">
             <charset>UTF-8</charset>
@@ -42,12 +37,12 @@
     </appender>
 
     <logger name="play" level="INFO"/>
-    <logger name="application" level="DEBUG"/>
+    <logger name="application" level="INFO"/>
     <logger name="org.jdbcdslog.ConnectionLogger" level="DEBUG"/> <!-- Won' log connections -->
     <logger name="org.jdbcdslog.StatementLogger" level="DEBUG"/> <!-- Will log all statements -->
     <logger name="org.jdbcdslog.ResultSetLogger" level="DEBUG"/>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="ASYNCFILE"/>
         <appender-ref ref="ASYNCSTDOUT"/>
     </root>
