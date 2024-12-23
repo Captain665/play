@@ -33,11 +33,6 @@ public abstract class BaseModel implements Serializable {
 		return createdAt;
 	}
 
-	@PrePersist
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = LocalDateTime.now();
-	}
-
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -50,16 +45,19 @@ public abstract class BaseModel implements Serializable {
 		return updatedAt;
 	}
 
-	@PreUpdate
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = LocalDateTime.now();
-	}
-
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
 
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = LocalDateTime.now();
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = LocalDateTime.now();
 	}
 }

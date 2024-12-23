@@ -1,43 +1,32 @@
-package common.employee;
+package common.employee.resources;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import common.assets.AssetModel;
-import common.base.BaseModel;
+import common.assets.resources.AssetResource;
 import common.company.CompanyModel;
-import common.employee.resources.EmployeeResource;
+import common.company.resources.CompanyResource;
+import common.employee.EmployeeModel;
 import common.enums.Gender;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "employee_details")
-public class EmployeeModel extends BaseModel {
-	@Column(name = "full_name")
-	private String fullName;
-	@Column(name = "mobile")
-	private String mobile;
-	@Column(name = "email_id")
-	private String emailId;
-	@Column(name = "gender")
-	private Gender gender;
-	@Column(name = "joining_date")
-	private String joiningDate;
-	@Column(name = "resign_date")
-	private String resignDate;
-	@Column(name = "role")
-	private String role;
-	@Column(name = "location")
-	private String location;
-	@ManyToOne(targetEntity = CompanyModel.class, fetch = FetchType.EAGER, optional = false)
-	private CompanyModel companyId;
-	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER)
-	@JsonManagedReference
-	private List<AssetModel> assets;
+public class EmployeeResource {
+
+	public Long id;
+	public String fullName;
+	public String mobile;
+	public String emailId;
+	public Gender gender;
+	public String joiningDate;
+	public String resignDate;
+	public String role;
+	public String location;
+	public CompanyModel companyId;
+	public List<AssetModel> assets;
 
 
-	public EmployeeModel(String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel companyId, List<AssetModel> assets) {
+	public EmployeeResource(Long id, String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel companyId, List<AssetModel> assets) {
+		this.id = id;
 		this.fullName = fullName;
 		this.mobile = mobile;
 		this.emailId = emailId;
@@ -48,6 +37,28 @@ public class EmployeeModel extends BaseModel {
 		this.location = location;
 		this.companyId = companyId;
 		this.assets = assets;
+	}
+
+	public EmployeeResource(EmployeeModel model) {
+		this.id = model.getId();
+		this.fullName = model.getFullName();
+		this.mobile = model.getMobile();
+		this.emailId = model.getEmailId();
+		this.gender = model.getGender();
+		this.joiningDate = model.getJoiningDate();
+		this.resignDate = model.getResignDate();
+		this.role = model.getRole();
+		this.location = model.getLocation();
+		this.companyId = model.getCompanyId();
+		this.assets = model.getAsset();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFullName() {
@@ -122,30 +133,28 @@ public class EmployeeModel extends BaseModel {
 		this.companyId = companyId;
 	}
 
-	public List<AssetModel> getAsset() {
+	public List<AssetModel> getAssets() {
 		return assets;
 	}
 
-	public void setAssetId(List<AssetModel> assets) {
+	public void setAssets(List<AssetModel> assets) {
 		this.assets = assets;
 	}
 
 	@Override
 	public String toString() {
-		return "EmployeeModel{" +
-				"fullName='" + fullName + '\'' +
+		return "EmployeeResource{" +
+				"id=" + id +
+				", fullName='" + fullName + '\'' +
 				", mobile='" + mobile + '\'' +
 				", emailId='" + emailId + '\'' +
 				", gender=" + gender +
-				", joiningDate=" + joiningDate +
-				", resignDate=" + resignDate +
+				", joiningDate='" + joiningDate + '\'' +
+				", resignDate='" + resignDate + '\'' +
 				", role='" + role + '\'' +
 				", location='" + location + '\'' +
-				", id=" + id +
-				", createdAt=" + createdAt +
-				", createdBy='" + createdBy + '\'' +
-				", updatedAt=" + updatedAt +
-				", updatedBy='" + updatedBy + '\'' +
+				", companyDetails=" + companyId +
+				", assets=" + assets +
 				'}';
 	}
 }
