@@ -32,7 +32,7 @@ public class EmployeeModel extends BaseModel {
 	private String location;
 	@ManyToOne(targetEntity = CompanyModel.class, fetch = FetchType.EAGER, optional = false)
 	private CompanyModel company;
-	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER, mappedBy = "employee")
 	@JsonManagedReference
 	private List<AssetModel> assets;
 

@@ -10,19 +10,33 @@ import jakarta.persistence.Table;
 public class CompanyModel extends BaseModel {
 
 	@Column(name = "name")
-	public String name;
+	private String name;
 	@Column(name = "address")
-	public String address;
+	private String address;
 	@Column(name = "city")
-	public String city;
+	private String city;
 	@Column(name = "state")
-	public String state;
+	private String state;
 	@Column(name = "country")
-	public String country;
+	private String country;
 	@Column(name = "gst_number")
-	public String gstNo;
+	private String gstNo;
 	@Column(name = "category")
-	public String category;
+	private String category;
+
+	public CompanyModel() {
+
+	}
+
+	public CompanyModel(String name, String address, String city, String state, String country, String gstNo, String category) {
+		this.name = name;
+		this.address = address;
+		this.city = city;
+		this.state = state;
+		this.country = country;
+		this.gstNo = gstNo;
+		this.category = category;
+	}
 
 	public String getName() {
 		return name;
@@ -77,20 +91,6 @@ public class CompanyModel extends BaseModel {
 	}
 
 	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public CompanyModel(){
-
-	}
-
-	public CompanyModel(String name, String address, String city, String state, String country, String gstNo, String category) {
-		this.name = name;
-		this.address = address;
-		this.city = city;
-		this.state = state;
-		this.country = country;
-		this.gstNo = gstNo;
 		this.category = category;
 	}
 

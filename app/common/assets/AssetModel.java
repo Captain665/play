@@ -9,17 +9,17 @@ import jakarta.persistence.*;
 @Table(name = "company_assets")
 public class AssetModel extends BaseModel {
 	@Column(name = "name")
-	public String name;
+	private String name;
 	@Column(name = "quantity")
-	public String quantity;
+	private String quantity;
 	@Column(name = "description")
-	public String description;
+	private String description;
 	@Column(name = "price")
-	public String price;
+	private String price;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "employee_id", nullable = false)
 	@JsonBackReference
-	public EmployeeModel employee;
+	private EmployeeModel employee;
 
 	public AssetModel() {
 	}
