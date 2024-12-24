@@ -80,6 +80,9 @@ public class CompanyModel extends BaseModel {
 		this.category = category;
 	}
 
+	public CompanyModel(){
+
+	}
 
 	public CompanyModel(String name, String address, String city, String state, String country, String gstNo, String category) {
 		this.name = name;

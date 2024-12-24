@@ -21,11 +21,11 @@ public class EmployeeResource {
 	public String resignDate;
 	public String role;
 	public String location;
-	public CompanyModel companyId;
+	public Long company;
 	public List<AssetModel> assets;
 
 
-	public EmployeeResource(Long id, String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel companyId, List<AssetModel> assets) {
+	public EmployeeResource(Long id, String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, Long company, List<AssetModel> assets) {
 		this.id = id;
 		this.fullName = fullName;
 		this.mobile = mobile;
@@ -35,7 +35,7 @@ public class EmployeeResource {
 		this.resignDate = resignDate;
 		this.role = role;
 		this.location = location;
-		this.companyId = companyId;
+		this.company = company;
 		this.assets = assets;
 	}
 
@@ -49,7 +49,7 @@ public class EmployeeResource {
 		this.resignDate = model.getResignDate();
 		this.role = model.getRole();
 		this.location = model.getLocation();
-		this.companyId = model.getCompanyId();
+		this.company = model.getCompany().getId();
 		this.assets = model.getAsset();
 	}
 
@@ -125,12 +125,12 @@ public class EmployeeResource {
 		this.location = location;
 	}
 
-	public CompanyModel getCompanyId() {
-		return companyId;
+	public Long getCompany() {
+		return company;
 	}
 
-	public void setCompanyId(CompanyModel companyId) {
-		this.companyId = companyId;
+	public void setCompany(Long company) {
+		this.company = company;
 	}
 
 	public List<AssetModel> getAssets() {
@@ -153,7 +153,7 @@ public class EmployeeResource {
 				", resignDate='" + resignDate + '\'' +
 				", role='" + role + '\'' +
 				", location='" + location + '\'' +
-				", companyDetails=" + companyId +
+				", companyDetails=" + company +
 				", assets=" + assets +
 				'}';
 	}

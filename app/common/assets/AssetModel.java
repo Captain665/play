@@ -19,14 +19,17 @@ public class AssetModel extends BaseModel {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "employee_id", nullable = false)
 	@JsonBackReference
-	public EmployeeModel employeeId;
+	public EmployeeModel employee;
 
-	public AssetModel(String name, String quantity, String description, String price, EmployeeModel employeeId) {
+	public AssetModel() {
+	}
+
+	public AssetModel(String name, String quantity, String description, String price, EmployeeModel employee) {
 		this.name = name;
 		this.quantity = quantity;
 		this.description = description;
 		this.price = price;
-		this.employeeId = employeeId;
+		this.employee = employee;
 	}
 
 	public String getName() {
@@ -61,11 +64,28 @@ public class AssetModel extends BaseModel {
 		this.price = price;
 	}
 
-	public EmployeeModel getEmployeeId() {
-		return employeeId;
+	public EmployeeModel getEmployee() {
+		return employee;
 	}
 
-	public void setEmployeeId(EmployeeModel employeeId) {
-		this.employeeId = employeeId;
+	public void setEmployee(EmployeeModel employee) {
+		this.employee = employee;
+	}
+
+
+	@Override
+	public String toString() {
+		return "AssetModel{" +
+				"name='" + name + '\'' +
+				", quantity='" + quantity + '\'' +
+				", description='" + description + '\'' +
+				", price='" + price + '\'' +
+				", employee=" + employee +
+				", id=" + id +
+				", createdAt=" + createdAt +
+				", createdBy='" + createdBy + '\'' +
+				", updatedAt=" + updatedAt +
+				", updatedBy='" + updatedBy + '\'' +
+				'}';
 	}
 }

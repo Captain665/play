@@ -1,9 +1,7 @@
 package common.employee;
 
 import common.assets.AssetModel;
-import common.assets.resources.AssetResource;
 import common.company.CompanyModel;
-import common.company.resources.CompanyResource;
 import common.enums.Gender;
 
 import java.util.List;
@@ -17,7 +15,7 @@ public class EmployeeBuilder {
 	public String resignDate;
 	public String role;
 	public String location;
-	public CompanyModel companyDetails;
+	public CompanyModel company;
 	public List<AssetModel> assets;
 
 	public String getFullName() {
@@ -92,12 +90,12 @@ public class EmployeeBuilder {
 		return this;
 	}
 
-	public CompanyModel getCompanyDetails() {
-		return companyDetails;
+	public CompanyModel getCompany() {
+		return company;
 	}
 
-	public EmployeeBuilder setCompanyDetails(CompanyModel companyDetails) {
-		this.companyDetails = companyDetails;
+	public EmployeeBuilder setCompany(CompanyModel company) {
+		this.company = company;
 		return this;
 	}
 
@@ -120,7 +118,7 @@ public class EmployeeBuilder {
 				this.resignDate,
 				this.role,
 				this.location,
-				this.companyDetails,
+				this.company,
 				this.assets
 		);
 	}

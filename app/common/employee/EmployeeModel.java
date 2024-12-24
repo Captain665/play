@@ -31,13 +31,15 @@ public class EmployeeModel extends BaseModel {
 	@Column(name = "location")
 	private String location;
 	@ManyToOne(targetEntity = CompanyModel.class, fetch = FetchType.EAGER, optional = false)
-	private CompanyModel companyId;
+	private CompanyModel company;
 	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER)
 	@JsonManagedReference
 	private List<AssetModel> assets;
 
+	public EmployeeModel() {
+	}
 
-	public EmployeeModel(String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel companyId, List<AssetModel> assets) {
+	public EmployeeModel(String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel company, List<AssetModel> assets) {
 		this.fullName = fullName;
 		this.mobile = mobile;
 		this.emailId = emailId;
@@ -46,7 +48,7 @@ public class EmployeeModel extends BaseModel {
 		this.resignDate = resignDate;
 		this.role = role;
 		this.location = location;
-		this.companyId = companyId;
+		this.company = company;
 		this.assets = assets;
 	}
 
@@ -114,19 +116,19 @@ public class EmployeeModel extends BaseModel {
 		this.location = location;
 	}
 
-	public CompanyModel getCompanyId() {
-		return companyId;
+	public CompanyModel getCompany() {
+		return company;
 	}
 
-	public void setCompanyId(CompanyModel companyId) {
-		this.companyId = companyId;
+	public void setCompany(CompanyModel company) {
+		this.company = company;
 	}
 
 	public List<AssetModel> getAsset() {
 		return assets;
 	}
 
-	public void setAssetId(List<AssetModel> assets) {
+	public void setAsset(List<AssetModel> assets) {
 		this.assets = assets;
 	}
 
