@@ -16,16 +16,13 @@ public class EmployeeResourceHandler {
 	private final Logger.ALogger logger = Logger.of("v1.employee.EmployeeController.EmployeeResourceHandler");
 
 	private final EmployeeRepository repository;
-	private final CompanyRepository companyRepository;
 
 	@Inject
-	public EmployeeResourceHandler(EmployeeRepository repository, CompanyRepository companyRepository) {
+	public EmployeeResourceHandler(EmployeeRepository repository) {
 		this.repository = repository;
-		this.companyRepository = companyRepository;
 	}
 
-	public CompletionStage<EmployeeResource> createOrUpdateEmployeeInfo(EmployeeResource resource) {
-		CompanyModel companyModel = companyRepository.getDetailById(resource.getCompany());
+	public CompletionStage<EmployeeResource> createOrUpdateEmployeeInfo(EmployeeResource resource, CompanyModel companyModel) {
 		EmployeeModel model = new EmployeeBuilder()
 				.setFullName(resource.getFullName())
 				.setMobile(resource.getMobile())
