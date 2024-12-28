@@ -35,7 +35,7 @@ public class EmployeeController {
 		JsonNode json = request.body().asJson();
 		EmployeeResource resource = Json.fromJson(json, EmployeeResource.class);
 		logger.info("[ " + request.id() + "] " + " resource: " + resource);
-		CompanyModel companyModel = companyRepository.getDetailById(resource.getCompany());
+		CompanyModel companyModel = companyRepository.getDetailById(resource.getCompanyId());
 		if (companyModel == null) {
 			return supplyAsync(() -> badRequest(Json.toJson(
 					new ApiFailure("company id is not present",

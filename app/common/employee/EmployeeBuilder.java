@@ -17,6 +17,7 @@ public class EmployeeBuilder {
 	public String location;
 	public CompanyModel company;
 	public List<AssetModel> assets;
+	public EmployeeSalary salary;
 
 	public String getFullName() {
 		return fullName;
@@ -108,6 +109,15 @@ public class EmployeeBuilder {
 		return this;
 	}
 
+	public EmployeeSalary getSalary() {
+		return salary;
+	}
+
+	public EmployeeBuilder setSalary(EmployeeSalary salary) {
+		this.salary = salary;
+		return this;
+	}
+
 	public EmployeeModel build() {
 		return new EmployeeModel(
 				this.fullName,
@@ -119,7 +129,8 @@ public class EmployeeBuilder {
 				this.role,
 				this.location,
 				this.company,
-				this.assets
+				this.assets,
+				this.salary
 		);
 	}
 }

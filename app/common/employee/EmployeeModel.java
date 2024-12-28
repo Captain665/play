@@ -35,11 +35,14 @@ public class EmployeeModel extends BaseModel {
 	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER, mappedBy = "employee")
 	@JsonManagedReference
 	private List<AssetModel> assets;
+	@OneToOne(targetEntity = EmployeeSalary.class, fetch = FetchType.EAGER, mappedBy = "employee")
+	@JsonManagedReference
+	private EmployeeSalary salary;
 
 	public EmployeeModel() {
 	}
 
-	public EmployeeModel(String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel company, List<AssetModel> assets) {
+	public EmployeeModel(String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, CompanyModel company, List<AssetModel> assets, EmployeeSalary salary) {
 		this.fullName = fullName;
 		this.mobile = mobile;
 		this.emailId = emailId;
@@ -50,6 +53,7 @@ public class EmployeeModel extends BaseModel {
 		this.location = location;
 		this.company = company;
 		this.assets = assets;
+		this.salary = salary;
 	}
 
 	public String getFullName() {
@@ -130,6 +134,22 @@ public class EmployeeModel extends BaseModel {
 
 	public void setAsset(List<AssetModel> assets) {
 		this.assets = assets;
+	}
+
+	public List<AssetModel> getAssets() {
+		return assets;
+	}
+
+	public void setAssets(List<AssetModel> assets) {
+		this.assets = assets;
+	}
+
+	public EmployeeSalary getSalary() {
+		return salary;
+	}
+
+	public void setSalary(EmployeeSalary salary) {
+		this.salary = salary;
 	}
 
 	@Override

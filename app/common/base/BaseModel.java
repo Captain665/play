@@ -37,6 +37,8 @@ public abstract class BaseModel implements Serializable {
 	public void setCreatedAt() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
+		this.createdBy = "Customer";
+		this.updatedBy = "Customer";
 	}
 
 	public String getCreatedBy() {
@@ -44,7 +46,7 @@ public abstract class BaseModel implements Serializable {
 	}
 
 	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
+		this.createdBy = "Customer";
 	}
 
 	public LocalDateTime getUpdatedAt() {
@@ -61,6 +63,6 @@ public abstract class BaseModel implements Serializable {
 	}
 
 	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
+		this.updatedBy = "Customer";
 	}
 }

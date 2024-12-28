@@ -5,6 +5,7 @@ import common.assets.resources.AssetResource;
 import common.company.CompanyModel;
 import common.company.resources.CompanyResource;
 import common.employee.EmployeeModel;
+import common.employee.EmployeeSalary;
 import common.enums.Gender;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,10 @@ import java.util.List;
 public class EmployeeResource {
 
 	public Long id;
+	public LocalDateTime createdAt;
+	public String createdBy;
+	public LocalDateTime updatedAt;
+	public String updatedBy;
 	public String fullName;
 	public String mobile;
 	public String emailId;
@@ -21,11 +26,13 @@ public class EmployeeResource {
 	public String resignDate;
 	public String role;
 	public String location;
-	public Long company;
+	public Long companyId;
 	public List<AssetModel> assets;
+	public Object companyDetails;
+	public EmployeeSalary salaryStructure;
 
 
-	public EmployeeResource(Long id, String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, Long company, List<AssetModel> assets) {
+	public EmployeeResource(Long id, String fullName, String mobile, String emailId, Gender gender, String joiningDate, String resignDate, String role, String location, List<AssetModel> assets, EmployeeSalary salaryStructure) {
 		this.id = id;
 		this.fullName = fullName;
 		this.mobile = mobile;
@@ -35,12 +42,16 @@ public class EmployeeResource {
 		this.resignDate = resignDate;
 		this.role = role;
 		this.location = location;
-		this.company = company;
 		this.assets = assets;
+		this.salaryStructure = salaryStructure;
 	}
 
 	public EmployeeResource(EmployeeModel model) {
 		this.id = model.getId();
+		this.createdAt = model.getCreatedAt();
+		this.createdBy = model.getCreatedBy();
+		this.updatedAt = model.getUpdatedAt();
+		this.updatedBy = model.getUpdatedBy();
 		this.fullName = model.getFullName();
 		this.mobile = model.getMobile();
 		this.emailId = model.getEmailId();
@@ -49,8 +60,9 @@ public class EmployeeResource {
 		this.resignDate = model.getResignDate();
 		this.role = model.getRole();
 		this.location = model.getLocation();
-		this.company = model.getCompany().getId();
+//		this.companyId = model.getCompany().getId();
 		this.assets = model.getAsset();
+		this.salaryStructure = model.getSalary();
 	}
 
 	public Long getId() {
@@ -125,12 +137,20 @@ public class EmployeeResource {
 		this.location = location;
 	}
 
-	public Long getCompany() {
-		return company;
+	public Long getCompanyId() {
+		return companyId;
 	}
 
-	public void setCompany(Long company) {
-		this.company = company;
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+
+	public Object getCompanyDetails() {
+		return companyDetails;
+	}
+
+	public void setCompanyDetails(Object companyDetails) {
+		this.companyDetails = companyDetails;
 	}
 
 	public List<AssetModel> getAssets() {
@@ -139,6 +159,46 @@ public class EmployeeResource {
 
 	public void setAssets(List<AssetModel> assets) {
 		this.assets = assets;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public EmployeeSalary getSalaryStructure() {
+		return salaryStructure;
+	}
+
+	public void setSalaryStructure(EmployeeSalary salaryStructure) {
+		this.salaryStructure = salaryStructure;
 	}
 
 	@Override
@@ -153,7 +213,7 @@ public class EmployeeResource {
 				", resignDate='" + resignDate + '\'' +
 				", role='" + role + '\'' +
 				", location='" + location + '\'' +
-				", companyDetails=" + company +
+				", companyDetails=" + companyId +
 				", assets=" + assets +
 				'}';
 	}

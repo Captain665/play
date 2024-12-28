@@ -3,12 +3,18 @@ package v1.employee;
 import common.assets.AssetModel;
 import common.company.CompanyModel;
 import common.employee.EmployeeModel;
+import common.employee.EmployeeSalary;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import play.Logger;
 import play.db.jpa.JPAApi;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,7 +23,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class JPAEmployeeRepository implements EmployeeRepository {
 	public final JPAApi jpaApi;
-	Logger.ALogger logger = Logger.of("JPAEmployeeRepository");
 
 	@Inject
 	public JPAEmployeeRepository(JPAApi jpaApi) {
@@ -26,25 +31,74 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
 	@Override
 	public CompletionStage<EmployeeModel> createOrUpdate(EmployeeModel model) {
-		return wrap(entityManager -> {
-			List<AssetModel> assetModelList = model.getAsset();
-			logger.info("asset model " + assetModelList);
-			EmployeeModel employeeModel = insert(entityManager, model);
-			logger.info("employee model " + employeeModel);
-			if (!assetModelList.isEmpty()) {
-				List<AssetModel> asset = assetModelList.stream().map(
-						companyAsset -> {
-							companyAsset.setEmployee(employeeModel);
-							logger.info("company assets " + companyAsset);
-							return insert(entityManager, companyAsset);
-						}
-				).toList();
-				employeeModel.setAsset(asset);
+		return supplyAsync(() -> wrap(entityManager -> {
+			EmployeeModel employeeModel = employeeModelCreateOrUpdate(model, entityManager);
+			EmployeeSalary salaryModel = model.getSalary();
+			salaryModel.setEmployee(employeeModel);
+			EmployeeSalary updatedSalaryModel = salaryModelCreateOrUpdate(employeeModel, salaryModel);
+			employeeModel.setSalary(updatedSalaryModel);
+			List<AssetModel> assetModelList = assetModelCreateOrUpdate(employeeModel, model.getAsset());
+			employeeModel.setAssets(assetModelList);
+			return employeeModel;
+
+		}));
+	}
+
+	private EmployeeModel employeeModelCreateOrUpdate(EmployeeModel employeeModel, EntityManager em) {
+		TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", employeeModel.getMobile());
+		try {
+			EmployeeModel modelInDb = query.setMaxResults(1).getSingleResult();
+			if (modelInDb != null) {
+				employeeModel.setId(modelInDb.getId());
+				return em.merge(employeeModel);
 			}
-			return supplyAsync(() -> employeeModel);
+			return null;
+		} catch (NoResultException e) {
+			return insert(em, employeeModel);
+		}
+	}
+
+	private EmployeeSalary salaryModelCreateOrUpdate(EmployeeModel employeeModel, EmployeeSalary employeeSalaryModel) {
+		return wrap(em -> {
+			TypedQuery<EmployeeSalary> query = em.createQuery("Select m from EmployeeSalary m where m.employee.id = :employeeId", EmployeeSalary.class).setParameter("employeeId", employeeModel.getId());
+			try {
+				EmployeeSalary modelInDb = query.setMaxResults(1).getSingleResult();
+				if (modelInDb != null) {
+					employeeSalaryModel.setId(modelInDb.getId());
+					return em.merge(employeeSalaryModel);
+				}
+				return null;
+			} catch (NoResultException e) {
+				return insert(em, employeeSalaryModel);
+			}
 		});
 	}
 
+	private List<AssetModel> assetModelCreateOrUpdate(EmployeeModel employeeModel, List<AssetModel> assetModel) {
+		return wrap(em -> {
+			TypedQuery<AssetModel> query = em.createQuery("Select m from AssetModel m where m.employee.id = :employeeId", AssetModel.class).setParameter("employeeId", employeeModel.getId());
+			try {
+				List<AssetModel> modelInDb = query.getResultList();
+				deleteAssetModelInDb(employeeModel.getId(), em);
+				return assetModel.stream().map(model -> {
+					model.setEmployee(employeeModel);
+					return insert(em, model);
+				}).collect(Collectors.toList());
+			} catch (NoResultException e) {
+				return assetModel.stream().map(model -> {
+					model.setEmployee(employeeModel);
+					return insert(em, model);
+				}).collect(Collectors.toList());
+			}
+		});
+	}
+
+	@Transactional
+	private void deleteAssetModelInDb(Long employeeId, EntityManager entityManager) {
+		Query query = entityManager.createNativeQuery("DELETE from company_assets Where employee_id = :employeeId");
+		query.setParameter("employeeId", employeeId);
+		query.executeUpdate();
+	}
 
 	private <T> T wrap(Function<EntityManager, T> function) {
 		return jpaApi.withTransaction(function);
@@ -56,6 +110,10 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
 	private AssetModel insert(EntityManager entityManager, AssetModel model) {
 		return entityManager.merge(model);
+	}
+
+	private EmployeeSalary insert(EntityManager entityManager, EmployeeSalary salary) {
+		return entityManager.merge(salary);
 	}
 
 }

@@ -38,9 +38,21 @@
 
     <logger name="play" level="INFO"/>
     <logger name="application" level="INFO"/>
-    <logger name="org.jdbcdslog.ConnectionLogger" level="DEBUG"/> <!-- Won' log connections -->
-    <logger name="org.jdbcdslog.StatementLogger" level="DEBUG"/> <!-- Will log all statements -->
-    <logger name="org.jdbcdslog.ResultSetLogger" level="DEBUG"/>
+    <logger name="org.jdbcdslog.ConnectionLogger" level="OFF"/> <!-- Won' log connections -->
+    <logger name="org.jdbcdslog.StatementLogger" level="OFF"/> <!-- Will log all statements -->
+    <logger name="org.jdbcdslog.ResultSetLogger" level="OFF"/>
+
+    <logger name="Hibernate" level="OFF"/>
+    <!-- hibernate logs -->
+    <logger name="org.hibernate.SQL" level="OFF"/> <!-- Suppresses SQL statements -->
+    <logger name="org.hibernate.type.descriptor.sql" level="OFF"/> <!-- Suppresses SQL parameters -->
+    <logger name="org.hibernate.event" level="OFF"/> <!-- Suppresses event logging -->
+    <logger name="org.hibernate.engine.internal" level="OFF"/> <!-- Logs engine-related warnings only -->
+    <logger name="org.hibernate.cfg" level="OFF"/> <!-- Suppresses configuration logs -->
+    <logger name="org.hibernate.transaction" level="OFF"/>
+
+    <logger name="jakarta.persistence.sql" level="OFF"/>
+    <logger name="jakarta.persistence" level="OFF"/>
 
     <root level="INFO">
         <appender-ref ref="ASYNCFILE"/>
