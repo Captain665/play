@@ -33,9 +33,7 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 	public CompletionStage<EmployeeModel> createOrUpdate(EmployeeModel model) {
 		return supplyAsync(() -> wrap(entityManager -> {
 			EmployeeModel employeeModel = employeeModelCreateOrUpdate(model, entityManager);
-			EmployeeSalary salaryModel = model.getSalary();
-			salaryModel.setEmployee(employeeModel);
-			EmployeeSalary updatedSalaryModel = salaryModelCreateOrUpdate(employeeModel, salaryModel);
+			EmployeeSalary updatedSalaryModel = salaryModelCreateOrUpdate(employeeModel, model.getSalary());
 			employeeModel.setSalary(updatedSalaryModel);
 			List<AssetModel> assetModelList = assetModelCreateOrUpdate(employeeModel, model.getAsset());
 			employeeModel.setAssets(assetModelList);
@@ -48,11 +46,8 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 		TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", employeeModel.getMobile());
 		try {
 			EmployeeModel modelInDb = query.setMaxResults(1).getSingleResult();
-			if (modelInDb != null) {
-				employeeModel.setId(modelInDb.getId());
-				return em.merge(employeeModel);
-			}
-			return null;
+			employeeModel.setId(modelInDb.getId());
+			return em.merge(employeeModel);
 		} catch (NoResultException e) {
 			return insert(em, employeeModel);
 		}
@@ -60,14 +55,12 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
 	private EmployeeSalary salaryModelCreateOrUpdate(EmployeeModel employeeModel, EmployeeSalary employeeSalaryModel) {
 		return wrap(em -> {
+			employeeSalaryModel.setEmployee(employeeModel);
 			TypedQuery<EmployeeSalary> query = em.createQuery("Select m from EmployeeSalary m where m.employee.id = :employeeId", EmployeeSalary.class).setParameter("employeeId", employeeModel.getId());
 			try {
 				EmployeeSalary modelInDb = query.setMaxResults(1).getSingleResult();
-				if (modelInDb != null) {
-					employeeSalaryModel.setId(modelInDb.getId());
-					return em.merge(employeeSalaryModel);
-				}
-				return null;
+				employeeSalaryModel.setId(modelInDb.getId());
+				return em.merge(employeeSalaryModel);
 			} catch (NoResultException e) {
 				return insert(em, employeeSalaryModel);
 			}
