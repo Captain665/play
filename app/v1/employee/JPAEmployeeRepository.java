@@ -1,7 +1,6 @@
 package v1.employee;
 
 import common.assets.AssetModel;
-import common.company.CompanyModel;
 import common.employee.EmployeeModel;
 import common.employee.EmployeeSalary;
 import jakarta.inject.Inject;
@@ -10,11 +9,10 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
-import play.Logger;
+
 import play.db.jpa.JPAApi;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class JPAEmployeeRepository implements EmployeeRepository {
-	public final JPAApi jpaApi;
+	private final JPAApi jpaApi;
 
 	@Inject
 	public JPAEmployeeRepository(JPAApi jpaApi) {
@@ -47,8 +45,13 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 		try {
 			EmployeeModel modelInDb = query.setMaxResults(1).getSingleResult();
 			employeeModel.setId(modelInDb.getId());
+			employeeModel.setNewUser(false);
+			employeeModel.setActive(true);
 			return em.merge(employeeModel);
 		} catch (NoResultException e) {
+			System.out.println("run here " + employeeModel);
+			employeeModel.setActive(true);
+			employeeModel.setNewUser(true);
 			return insert(em, employeeModel);
 		}
 	}

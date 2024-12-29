@@ -38,6 +38,10 @@ public class EmployeeModel extends BaseModel {
 	@OneToOne(targetEntity = EmployeeSalary.class, fetch = FetchType.EAGER, mappedBy = "employee")
 	@JsonManagedReference
 	private EmployeeSalary salary;
+	@Column(name = "active")
+	private Boolean isActive;
+	@Column(name = "new_user")
+	private Boolean isNewUser;
 
 	public EmployeeModel() {
 	}
@@ -152,6 +156,22 @@ public class EmployeeModel extends BaseModel {
 		this.salary = salary;
 	}
 
+	public Boolean getActive() {
+		return isActive;
+	}
+
+	public void setActive(Boolean active) {
+		isActive = active;
+	}
+
+	public Boolean getNewUser() {
+		return isNewUser;
+	}
+
+	public void setNewUser(Boolean newUser) {
+		isNewUser = newUser;
+	}
+
 	@Override
 	public String toString() {
 		return "EmployeeModel{" +
@@ -159,15 +179,12 @@ public class EmployeeModel extends BaseModel {
 				", mobile='" + mobile + '\'' +
 				", emailId='" + emailId + '\'' +
 				", gender=" + gender +
-				", joiningDate=" + joiningDate +
-				", resignDate=" + resignDate +
+				", joiningDate='" + joiningDate + '\'' +
+				", resignDate='" + resignDate + '\'' +
 				", role='" + role + '\'' +
 				", location='" + location + '\'' +
-				", id=" + id +
-				", createdAt=" + createdAt +
-				", createdBy='" + createdBy + '\'' +
-				", updatedAt=" + updatedAt +
-				", updatedBy='" + updatedBy + '\'' +
+				", isActive=" + isActive +
+				", isNewUser=" + isNewUser +
 				'}';
 	}
 }

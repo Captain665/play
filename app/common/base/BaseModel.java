@@ -56,6 +56,7 @@ public abstract class BaseModel implements Serializable {
 	@PreUpdate
 	public void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();
+		this.updatedBy = "Customer";
 	}
 
 	public String getUpdatedBy() {
