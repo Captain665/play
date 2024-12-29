@@ -32,23 +32,21 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 		return supplyAsync(() -> wrap(em -> {
 			EmployeeSalary salaryModel = model.getSalary();
 			List<AssetModel> assetModelList = model.getAsset();
+
 			TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", model.getMobile());
 			try {
 				EmployeeModel employeeModelInDb = query.setMaxResults(1).getSingleResult();
-				model.setId(employeeModelInDb.getId());
-				salaryModel.setId(employeeModelInDb.getSalary().getId());
-				salaryModel.setEmployee(employeeModelInDb);
-				EmployeeSalary updatedSalaryModel = em.merge(salaryModel);
-				deleteAssetModelInDb(employeeModelInDb.getId(), em);
-				List<AssetModel> assetModels = assetModelList.stream().map(assetModel -> {
-					assetModel.setEmployee(employeeModelInDb);
-					return insert(em, assetModel);
-				}).toList();
-				EmployeeModel model1 = em.merge(model);
+
+				EmployeeSalary updatedSalaryModel = updateSalaryModel(employeeModelInDb, salaryModel, em);
+				List<AssetModel> assetModels = updateAssetModel(employeeModelInDb, assetModelList, em);
+				EmployeeModel model1 = updateEmployeeModel(model, employeeModelInDb, em);
+
 				model1.setAssets(assetModels);
 				model1.setSalary(updatedSalaryModel);
 				return model1;
 			} catch (NoResultException e) {
+				model.setActive(true);
+				model.setNewUser(true);
 				EmployeeModel employeeModel = insert(em, model);
 				employeeModel.setAssets(assetModelList.stream().map(assetModel -> {
 					assetModel.setEmployee(employeeModel);
@@ -61,53 +59,24 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 		}));
 	}
 
-	private EmployeeModel employeeModelCreateOrUpdate(EmployeeModel employeeModel, EntityManager em) {
-		TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", employeeModel.getMobile());
-		try {
-			EmployeeModel modelInDb = query.setMaxResults(1).getSingleResult();
-			employeeModel.setId(modelInDb.getId());
-			employeeModel.setNewUser(false);
-			employeeModel.setActive(true);
-			return em.merge(employeeModel);
-		} catch (NoResultException e) {
-			System.out.println("run here " + employeeModel);
-			employeeModel.setActive(true);
-			employeeModel.setNewUser(true);
-			return insert(em, employeeModel);
-		}
+	private EmployeeModel updateEmployeeModel(EmployeeModel requestModel, EmployeeModel employeeModelInDb, EntityManager em) {
+		requestModel.setId(employeeModelInDb.getId());
+		requestModel.setNewUser(false);
+		return em.merge(requestModel);
 	}
 
-	private EmployeeSalary salaryModelCreateOrUpdate(EmployeeModel employeeModel, EmployeeSalary employeeSalaryModel) {
-		return wrap(em -> {
-			employeeSalaryModel.setEmployee(employeeModel);
-			TypedQuery<EmployeeSalary> query = em.createQuery("Select m from EmployeeSalary m where m.employee.id = :employeeId", EmployeeSalary.class).setParameter("employeeId", employeeModel.getId());
-			try {
-				EmployeeSalary modelInDb = query.setMaxResults(1).getSingleResult();
-				employeeSalaryModel.setId(modelInDb.getId());
-				return em.merge(employeeSalaryModel);
-			} catch (NoResultException e) {
-				return insert(em, employeeSalaryModel);
-			}
-		});
+	private EmployeeSalary updateSalaryModel(EmployeeModel employeeModel, EmployeeSalary employeeSalaryModel, EntityManager em) {
+		employeeSalaryModel.setEmployee(employeeModel);
+		employeeSalaryModel.setId(employeeModel.getSalary().getId());
+		return em.merge(employeeSalaryModel);
 	}
 
-	private List<AssetModel> assetModelCreateOrUpdate(EmployeeModel employeeModel, List<AssetModel> assetModel) {
-		return wrap(em -> {
-			TypedQuery<AssetModel> query = em.createQuery("Select m from AssetModel m where m.employee.id = :employeeId", AssetModel.class).setParameter("employeeId", employeeModel.getId());
-			try {
-				List<AssetModel> modelInDb = query.getResultList();
-				deleteAssetModelInDb(employeeModel.getId(), em);
-				return assetModel.stream().map(model -> {
-					model.setEmployee(employeeModel);
-					return insert(em, model);
-				}).collect(Collectors.toList());
-			} catch (NoResultException e) {
-				return assetModel.stream().map(model -> {
-					model.setEmployee(employeeModel);
-					return insert(em, model);
-				}).collect(Collectors.toList());
-			}
-		});
+	private List<AssetModel> updateAssetModel(EmployeeModel employeeModel, List<AssetModel> assetModel, EntityManager em) {
+		deleteAssetModelInDb(employeeModel.getId(), em);
+		return assetModel.stream().map(model -> {
+			model.setEmployee(employeeModel);
+			return insert(em, model);
+		}).toList();
 	}
 
 	@Transactional
