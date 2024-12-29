@@ -2,7 +2,9 @@ package v1.company;
 
 import common.company.CompanyModel;
 
+import java.util.concurrent.CompletionStage;
+
 public interface CompanyRepository {
 
-	public CompanyModel getDetailById(Long id);
+	public CompletionStage<CompanyModel> getDetailById(Long id);
 }

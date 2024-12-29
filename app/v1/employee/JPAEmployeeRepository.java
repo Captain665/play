@@ -58,8 +58,19 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 		}));
 	}
 
+	@Override
+	public CompletionStage<List<EmployeeModel>> getEmployeeList(Long companyId) {
+		return supplyAsync(() -> wrap(em -> {
+			TypedQuery<EmployeeModel> query = em.createQuery(
+							"Select m from EmployeeModel m where m.company.id = :company_id and m.isActive is true", EmployeeModel.class)
+					.setParameter("company_id", companyId);
+			return query.getResultList();
+		}));
+	}
+
 	private EmployeeModel updateEmployeeModel(EmployeeModel requestModel, EmployeeModel employeeModelInDb, EntityManager em) {
 		requestModel.setId(employeeModelInDb.getId());
+		requestModel.setActive(true);
 		requestModel.setNewUser(false);
 		return em.merge(requestModel);
 	}

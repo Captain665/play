@@ -12,3 +12,6 @@ GET     /health                     controllers.HomeController.health()
 
 # Employee
 POST    /v1/employee                v1.employee.EmployeeController.create(request: Request)
+
+# Company
+GET     /v1/company/:id/details     v1.company.CompanyController.get(request: Request, id: Long)

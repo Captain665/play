@@ -35,18 +35,20 @@ public class EmployeeController {
 		JsonNode json = request.body().asJson();
 		EmployeeResource resource = Json.fromJson(json, EmployeeResource.class);
 		logger.info("[ " + request.id() + "] " + " resource: " + resource);
-		CompanyModel companyModel = companyRepository.getDetailById(resource.getCompanyId());
-		if (companyModel == null) {
-			return supplyAsync(() -> badRequest(Json.toJson(
-					new ApiFailure("company id is not present",
-							new ErrorCode(request.id(), "COMPANY_ID", "company id is not present")))));
-		}
-		return resourceHandler.createOrUpdateEmployeeInfo(resource, companyModel)
-				.thenApplyAsync(
-						response -> {
-							logger.info("[" + request.id() + "] " + " response: " + response);
-							return ok(Json.toJson(new ApiSuccess(response)));
-						}
-				);
+		return companyRepository.getDetailById(resource.getCompanyId())
+				.thenComposeAsync(companyModel -> {
+					System.out.println("company model is ");
+					if (companyModel == null) {
+						return supplyAsync(() -> badRequest(Json.toJson(new ApiFailure("company id is not present",
+								new ErrorCode(request.id(), "COMPANY_ID", "company id is not present")))));
+					}
+					return resourceHandler.createOrUpdateEmployeeInfo(resource, companyModel)
+							.thenApplyAsync(
+									response -> {
+										logger.info("[" + request.id() + "] " + " response: " + response);
+										return ok(Json.toJson(new ApiSuccess(response)));
+									}
+							);
+				});
 	}
 }

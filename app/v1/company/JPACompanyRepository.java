@@ -8,7 +8,10 @@ import jakarta.persistence.TypedQuery;
 import play.Logger;
 import play.db.jpa.JPAApi;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class JPACompanyRepository implements CompanyRepository {
 
@@ -21,15 +24,15 @@ public class JPACompanyRepository implements CompanyRepository {
 	}
 
 	@Override
-	public CompanyModel getDetailById(Long id) {
-		return wrap(entityManager -> {
+	public CompletionStage<CompanyModel> getDetailById(Long id) {
+		return supplyAsync(() -> wrap(entityManager -> {
 			TypedQuery<CompanyModel> query = entityManager.createQuery("SELECT m from CompanyModel m where m.id = :id", CompanyModel.class).setParameter("id", id);
 			try {
 				return query.getSingleResult();
 			} catch (NoResultException e) {
 				return null;
 			}
-		});
+		}));
 
 	}
 

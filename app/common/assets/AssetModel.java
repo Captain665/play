@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "company_assets")
 public class AssetModel extends BaseModel {
+	@Column(name = "type")
+	private String type;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "quantity")
@@ -24,7 +26,8 @@ public class AssetModel extends BaseModel {
 	public AssetModel() {
 	}
 
-	public AssetModel(String name, String quantity, String description, String price, EmployeeModel employee) {
+	public AssetModel(String type, String name, String quantity, String description, String price, EmployeeModel employee) {
+		this.type = type;
 		this.name = name;
 		this.quantity = quantity;
 		this.description = description;
@@ -72,20 +75,23 @@ public class AssetModel extends BaseModel {
 		this.employee = employee;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	@Override
 	public String toString() {
 		return "AssetModel{" +
-				"name='" + name + '\'' +
+				"type='" + type + '\'' +
+				", name='" + name + '\'' +
 				", quantity='" + quantity + '\'' +
 				", description='" + description + '\'' +
 				", price='" + price + '\'' +
 				", employee=" + employee +
-				", id=" + id +
-				", createdAt=" + createdAt +
-				", createdBy='" + createdBy + '\'' +
-				", updatedAt=" + updatedAt +
-				", updatedBy='" + updatedBy + '\'' +
 				'}';
 	}
 }
