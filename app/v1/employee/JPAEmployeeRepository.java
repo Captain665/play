@@ -29,14 +29,35 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
 	@Override
 	public CompletionStage<EmployeeModel> createOrUpdate(EmployeeModel model) {
-		return supplyAsync(() -> wrap(entityManager -> {
-			EmployeeModel employeeModel = employeeModelCreateOrUpdate(model, entityManager);
-			EmployeeSalary updatedSalaryModel = salaryModelCreateOrUpdate(employeeModel, model.getSalary());
-			employeeModel.setSalary(updatedSalaryModel);
-			List<AssetModel> assetModelList = assetModelCreateOrUpdate(employeeModel, model.getAsset());
-			employeeModel.setAssets(assetModelList);
-			return employeeModel;
-
+		return supplyAsync(() -> wrap(em -> {
+			EmployeeSalary salaryModel = model.getSalary();
+			List<AssetModel> assetModelList = model.getAsset();
+			TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", model.getMobile());
+			try {
+				EmployeeModel employeeModelInDb = query.setMaxResults(1).getSingleResult();
+				model.setId(employeeModelInDb.getId());
+				salaryModel.setId(employeeModelInDb.getSalary().getId());
+				salaryModel.setEmployee(employeeModelInDb);
+				EmployeeSalary updatedSalaryModel = em.merge(salaryModel);
+				deleteAssetModelInDb(employeeModelInDb.getId(), em);
+				List<AssetModel> assetModels = assetModelList.stream().map(assetModel -> {
+					assetModel.setEmployee(employeeModelInDb);
+					return insert(em, assetModel);
+				}).toList();
+				EmployeeModel model1 = em.merge(model);
+				model1.setAssets(assetModels);
+				model1.setSalary(updatedSalaryModel);
+				return model1;
+			} catch (NoResultException e) {
+				EmployeeModel employeeModel = insert(em, model);
+				employeeModel.setAssets(assetModelList.stream().map(assetModel -> {
+					assetModel.setEmployee(employeeModel);
+					return insert(em, assetModel);
+				}).toList());
+				salaryModel.setEmployee(employeeModel);
+				employeeModel.setSalary(insert(em, salaryModel));
+				return employeeModel;
+			}
 		}));
 	}
 
