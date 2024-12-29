@@ -1,5 +1,6 @@
 package common.assets.resources;
 
+import common.assets.AssetModel;
 import common.employee.EmployeeModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
@@ -13,6 +14,15 @@ public class AssetResource {
 	public String description;
 	public String price;
 
+
+	public AssetResource(AssetModel model) {
+		this.id = model.getId();
+		this.type = model.getType();
+		this.name = model.getName();
+		this.quantity = model.getQuantity();
+		this.description = model.getDescription();
+		this.price = model.getDescription();
+	}
 
 	public Long getId() {
 		return id;
@@ -51,15 +61,6 @@ public class AssetResource {
 	}
 
 	public void setPrice(String price) {
-		this.price = price;
-	}
-
-	public AssetResource(Long id, String type, String name, String quantity, String description, String price) {
-		this.id = id;
-		this.type = type;
-		this.name = name;
-		this.quantity = quantity;
-		this.description = description;
 		this.price = price;
 	}
 
