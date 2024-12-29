@@ -30,7 +30,6 @@ public class CompanyResourceHandler {
 					if (companyModel != null) {
 						return employeeRepository.getEmployeeList(companyId)
 								.thenApplyAsync(employeeModels -> {
-									System.out.println("run here ................");
 									CompanyResponseResource companyResponseResource = new CompanyResponseResource(companyModel);
 									companyResponseResource.setEmployeeDetails(employeeModels.stream().map(EmployeeResponseResource::new).toList());
 									companyResponseResource.setNumberOfEmployee(BigInteger.valueOf(employeeModels.size()));

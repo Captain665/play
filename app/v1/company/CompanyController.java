@@ -32,8 +32,10 @@ public class CompanyController {
 		return resourceHandler.getCompanyDetails(id)
 				.thenApplyAsync(response -> {
 					if (response == null) {
+						logger.info("[" + request.id() + "] " + " error: " + "company id not found");
 						return badRequest(Json.toJson(new ApiFailure("company id not found", new ErrorCode(request.id(), "COMPANY_ID", "company id not found"))));
 					}
+					logger.info("[" + request.id() + "] " + " response: " + response);
 					return ok(Json.toJson(new ApiSuccess(response)));
 				});
 	}
