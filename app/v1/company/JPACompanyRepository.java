@@ -16,7 +16,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class JPACompanyRepository implements CompanyRepository {
 
 	private final JPAApi jpaApi;
-	private final Logger.ALogger logger = Logger.of("JPACompanyRepository");
 
 	@Inject
 	public JPACompanyRepository(JPAApi jpaApi) {
