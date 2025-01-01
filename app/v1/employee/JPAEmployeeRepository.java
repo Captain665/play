@@ -29,31 +29,16 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 	@Override
 	public CompletionStage<EmployeeModel> createOrUpdate(EmployeeModel model) {
 		return supplyAsync(() -> wrap(em -> {
-			EmployeeSalary salaryModel = model.getSalary();
-			List<AssetModel> assetModelList = model.getAsset();
-
 			TypedQuery<EmployeeModel> query = em.createQuery("Select m from EmployeeModel m where m.mobile = :mobile", EmployeeModel.class).setParameter("mobile", model.getMobile());
 			try {
 				EmployeeModel employeeModelInDb = query.setMaxResults(1).getSingleResult();
-
-				EmployeeSalary updatedSalaryModel = updateSalaryModel(employeeModelInDb, salaryModel, em);
-				List<AssetModel> assetModels = updateAssetModel(employeeModelInDb, assetModelList, em);
-				EmployeeModel model1 = updateEmployeeModel(model, employeeModelInDb, em);
-
-				model1.setAssets(assetModels);
-				model1.setSalary(updatedSalaryModel);
-				return model1;
+				return updateEmployeeModel(model, employeeModelInDb, em);
 			} catch (NoResultException e) {
 				model.setActive(true);
 				model.setNewUser(true);
-				EmployeeModel employeeModel = insert(em, model);
-				employeeModel.setAssets(assetModelList.stream().map(assetModel -> {
-					assetModel.setEmployee(employeeModel);
-					return insert(em, assetModel);
-				}).toList());
-				salaryModel.setEmployee(employeeModel);
-				employeeModel.setSalary(insert(em, salaryModel));
-				return employeeModel;
+				model.getSalary().setEmployee(model);
+				model.getAssets().forEach(assetModel -> assetModel.setEmployee(model));
+				return insert(em, model);
 			}
 		}));
 	}
@@ -69,24 +54,14 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 	}
 
 	private EmployeeModel updateEmployeeModel(EmployeeModel requestModel, EmployeeModel employeeModelInDb, EntityManager em) {
+		deleteAssetModelInDb(employeeModelInDb.getId(), em);
 		requestModel.setId(employeeModelInDb.getId());
+		requestModel.getSalary().setEmployee(requestModel);
+		requestModel.getSalary().setId(employeeModelInDb.getSalary().getId());
+		requestModel.getAssets().forEach(assetModel -> assetModel.setEmployee(requestModel));
 		requestModel.setActive(true);
 		requestModel.setNewUser(false);
 		return em.merge(requestModel);
-	}
-
-	private EmployeeSalary updateSalaryModel(EmployeeModel employeeModel, EmployeeSalary employeeSalaryModel, EntityManager em) {
-		employeeSalaryModel.setEmployee(employeeModel);
-		employeeSalaryModel.setId(employeeModel.getSalary().getId());
-		return em.merge(employeeSalaryModel);
-	}
-
-	private List<AssetModel> updateAssetModel(EmployeeModel employeeModel, List<AssetModel> assetModel, EntityManager em) {
-		deleteAssetModelInDb(employeeModel.getId(), em);
-		return assetModel.stream().map(model -> {
-			model.setEmployee(employeeModel);
-			return insert(em, model);
-		}).toList();
 	}
 
 	@Transactional
@@ -102,14 +77,6 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
 	private EmployeeModel insert(EntityManager entityManager, EmployeeModel model) {
 		return entityManager.merge(model);
-	}
-
-	private AssetModel insert(EntityManager entityManager, AssetModel model) {
-		return entityManager.merge(model);
-	}
-
-	private EmployeeSalary insert(EntityManager entityManager, EmployeeSalary salary) {
-		return entityManager.merge(salary);
 	}
 
 }

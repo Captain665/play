@@ -32,10 +32,10 @@ public class EmployeeModel extends BaseModel {
 	private String location;
 	@ManyToOne(targetEntity = CompanyModel.class, fetch = FetchType.EAGER, optional = false)
 	private CompanyModel company;
-	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER, mappedBy = "employee")
+	@OneToMany(targetEntity = AssetModel.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "employee")
 	@JsonManagedReference
 	private List<AssetModel> assets;
-	@OneToOne(targetEntity = EmployeeSalary.class, fetch = FetchType.EAGER, mappedBy = "employee")
+	@OneToOne(targetEntity = EmployeeSalary.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "employee")
 	@JsonManagedReference
 	private EmployeeSalary salary;
 	@Column(name = "active")
